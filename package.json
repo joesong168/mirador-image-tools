@@ -11,7 +11,8 @@
     "umd"
   ],
   "scripts": {
-    "build": "nwb build-react-component",
+    "build": "nwb build-react-component --no-demo",
+    "deploy": "nwb build-react-component --no-demo mkdir -p ../mirador-integration/mirador-image-tools/es && cp -r es/ ../mirador-integration/mirador-image-tools/es",
     "clean": "nwb clean-module && nwb clean-demo",
     "lint": "eslint ./src ./__tests__",
     "prepublishOnly": "npm run build",
