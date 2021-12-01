@@ -75,33 +75,36 @@ class MiradorImageTools extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { viewConfig, viewer } = this.props;
-    if (viewer && viewConfig !== prevProps.viewConfig) this.applyFilters();
+    const { viewConfig, advanceViewConfig, viewer } = this.props;
+    if (viewer && (viewConfig !== prevProps.viewConfig || advanceViewConfig !== prevProps.advanceViewConfig)) this.applyFilters();
   }
 
   handleChange(param) {
-    const { updateViewport, windowId } = this.props;
-    return (value) => updateViewport(windowId, { [param]: value });
+    const { updateViewport, windowId, advanceViewConfig, viewConfig } = this.props;
+
+    return (value) => {
+      advanceViewConfig[param] = value; 
+      updateViewport(windowId, { [param]: value })
+    };
   }
 
   handleReset() {
-    const { updateViewport, windowId } = this.props;
+    const { updateViewport, windowId, advanceViewConfig } = this.props;
     const viewConfig = {
       rotation: 0,
       flip: false,
-      brightness: 100,
-      contrast: 100,
-      saturate: 100,
-      grayscale: 0,
-      invert: 0,
     };
-
+    advanceViewConfig['brightness'] = 100
+    advanceViewConfig['contrast'] = 100
+    advanceViewConfig['saturate'] = 100
+    advanceViewConfig['grayscale'] = 0
+    advanceViewConfig['invert'] = 0
     updateViewport(windowId, viewConfig);
   }
 
   applyFilters() {
     const {
-      viewConfig: {
+      advanceViewConfig: {
         brightness = 100,
         contrast = 100,
         saturate = 100,
@@ -143,7 +146,6 @@ class MiradorImageTools extends Component {
 
   toggleFlip() {
     const { updateViewport, viewConfig: { flip = false }, windowId } = this.props;
-
     updateViewport(windowId, { flip: !flip });
   }
 
@@ -153,6 +155,9 @@ class MiradorImageTools extends Component {
       theme: { palette },
       viewConfig: {
         flip = false,
+        rotation = 0,
+      },
+      advanceViewConfig: {
         brightness = 100,
         contrast = 100,
         saturate = 100,
@@ -178,7 +183,7 @@ class MiradorImageTools extends Component {
           containerId={containerId}
           onClick={this.toggleState}
         >
-          { open ? <CloseSharpIcon /> : <TuneSharpIcon /> }
+          {open ? <CloseSharpIcon /> : <TuneSharpIcon />}
         </MiradorMenuButton>
       </div>
     );
@@ -186,102 +191,102 @@ class MiradorImageTools extends Component {
       <div className={`MuiPaper-elevation4 ${classes.root}`}>
         {isSmallDisplay && toggleButton}
         {open
-        && (
-        <React.Fragment>
-          <div className={classes.borderContainer}>
-            <ImageRotation
-              containerId={containerId}
-              label={t('rotateRight')}
-              onClick={() => this.toggleRotate(90)}
-              variant="right"
-            />
-            <ImageRotation
-              containerId={containerId}
-              label={t('rotateLeft')}
-              onClick={() => this.toggleRotate(-90)}
-              variant="left"
-            />
-            <ImageFlip
-              label={t('flip')}
-              onClick={this.toggleFlip}
-              flipped={flip}
-              containerId={containerId}
-            />
-          </div>
-          <div className={classes.borderContainer}>
-            <ImageTool
-              type="brightness"
-              label={t('brightness')}
-              max={200}
-              windowId={windowId}
-              value={brightness}
-              foregroundColor={foregroundColor}
-              containerId={containerId}
-              onChange={this.handleChange('brightness')}
-            >
-              <BrightnessIcon />
-            </ImageTool>
-            <ImageTool
-              type="contrast"
-              label={t('contrast')}
-              max={200}
-              windowId={windowId}
-              value={contrast}
-              foregroundColor={foregroundColor}
-              containerId={containerId}
-              onChange={this.handleChange('contrast')}
-            >
-              <ContrastIcon style={{ transform: 'rotate(180deg)' }} />
-            </ImageTool>
-            <ImageTool
-              type="saturate"
-              label={t('saturation')}
-              max={200}
-              windowId={windowId}
-              value={saturate}
-              foregroundColor={foregroundColor}
-              containerId={containerId}
-              onChange={this.handleChange('saturate')}
-            >
-              <GradientIcon />
-            </ImageTool>
-            <ImageTool
-              type="grayscale"
-              variant="toggle"
-              label={t('greyscale')}
-              windowId={windowId}
-              value={grayscale}
-              backgroundColor={backgroundColor}
-              foregroundColor={foregroundColor}
-              containerId={containerId}
-              onChange={this.handleChange('grayscale')}
-            >
-              <TonalityIcon />
-            </ImageTool>
-            <ImageTool
-              type="invert"
-              variant="toggle"
-              label={t('invert')}
-              windowId={windowId}
-              value={invert}
-              foregroundColor={foregroundColor}
-              containerId={containerId}
-              onChange={this.handleChange('invert')}
-            >
-              <InvertColorsIcon />
-            </ImageTool>
-          </div>
-          <div className={isSmallDisplay ? '' : classes.borderContainer}>
-            <MiradorMenuButton
-              aria-label={t('revert')}
-              containerId={containerId}
-              onClick={this.handleReset}
-            >
-              <ReplaySharpIcon />
-            </MiradorMenuButton>
-          </div>
-        </React.Fragment>
-        )}
+          && (
+            <React.Fragment>
+              <div className={classes.borderContainer}>
+                <ImageRotation
+                  containerId={containerId}
+                  label={t('rotateRight')}
+                  onClick={() => this.toggleRotate(90)}
+                  variant="right"
+                />
+                <ImageRotation
+                  containerId={containerId}
+                  label={t('rotateLeft')}
+                  onClick={() => this.toggleRotate(-90)}
+                  variant="left"
+                />
+                <ImageFlip
+                  label={t('flip')}
+                  onClick={this.toggleFlip}
+                  flipped={flip}
+                  containerId={containerId}
+                />
+              </div>
+              <div className={classes.borderContainer}>
+                <ImageTool
+                  type="brightness"
+                  label={t('brightness')}
+                  max={200}
+                  windowId={windowId}
+                  value={brightness}
+                  foregroundColor={foregroundColor}
+                  containerId={containerId}
+                  onChange={this.handleChange('brightness')}
+                >
+                  <BrightnessIcon />
+                </ImageTool>
+                <ImageTool
+                  type="contrast"
+                  label={t('contrast')}
+                  max={200}
+                  windowId={windowId}
+                  value={contrast}
+                  foregroundColor={foregroundColor}
+                  containerId={containerId}
+                  onChange={this.handleChange('contrast')}
+                >
+                  <ContrastIcon style={{ transform: 'rotate(180deg)' }} />
+                </ImageTool>
+                <ImageTool
+                  type="saturate"
+                  label={t('saturation')}
+                  max={200}
+                  windowId={windowId}
+                  value={saturate}
+                  foregroundColor={foregroundColor}
+                  containerId={containerId}
+                  onChange={this.handleChange('saturate')}
+                >
+                  <GradientIcon />
+                </ImageTool>
+                <ImageTool
+                  type="grayscale"
+                  variant="toggle"
+                  label={t('greyscale')}
+                  windowId={windowId}
+                  value={grayscale}
+                  backgroundColor={backgroundColor}
+                  foregroundColor={foregroundColor}
+                  containerId={containerId}
+                  onChange={this.handleChange('grayscale')}
+                >
+                  <TonalityIcon />
+                </ImageTool>
+                <ImageTool
+                  type="invert"
+                  variant="toggle"
+                  label={t('invert')}
+                  windowId={windowId}
+                  value={invert}
+                  foregroundColor={foregroundColor}
+                  containerId={containerId}
+                  onChange={this.handleChange('invert')}
+                >
+                  <InvertColorsIcon />
+                </ImageTool>
+              </div>
+              <div className={isSmallDisplay ? '' : classes.borderContainer}>
+                <MiradorMenuButton
+                  aria-label={t('revert')}
+                  containerId={containerId}
+                  onClick={this.handleReset}
+                >
+                  <ReplaySharpIcon />
+                </MiradorMenuButton>
+              </div>
+            </React.Fragment>
+          )}
         {!isSmallDisplay && toggleButton}
       </div>
     );
@@ -299,6 +304,7 @@ MiradorImageTools.propTypes = {
   updateWindow: PropTypes.func.isRequired,
   viewer: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   viewConfig: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  advanceViewConfig: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   windowId: PropTypes.string.isRequired,
   width: PropTypes.oneOf(['lg', 'md', 'sm', 'xl', 'xs']).isRequired,
 };
@@ -307,7 +313,11 @@ MiradorImageTools.defaultProps = {
   enabled: true,
   open: true,
   viewer: undefined,
-  viewConfig: {},
+  viewConfig: {
+    rotation: 0,
+    flip: false,
+  },
+  advanceViewConfig: {},
 };
 
 // Export without wrapping HOC for testing.
