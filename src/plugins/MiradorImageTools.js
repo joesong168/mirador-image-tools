@@ -145,7 +145,7 @@ class MiradorImageTools extends Component {
   }
 
   toggleFlip() {
-    const { updateViewport, viewConfig: { flip = false }, windowId } = this.props;
+    const { updateViewport, viewConfig: { flip = false, rotation = 0 }, windowId } = this.props;
     updateViewport(windowId, { flip: !flip });
   }
 
